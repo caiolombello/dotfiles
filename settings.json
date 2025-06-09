@@ -1,0 +1,28 @@
+{
+    "remote.SSH.remotePlatform": {
+        "rpi5": "linux"
+    },
+    "editor.fontFamily": "'Hack Nerd Font', 'Hack Nerd Font Mono'",
+    "files.autoSave": "afterDelay",
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "editor.renderWhitespace": "all",
+    "editor.tabSize": 2,
+    "git.enableSmartCommit": true,
+    "git.confirmSync": false,
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/*.pyc": true
+    },
+    "files.associations": {
+        "*.tf": "terraform",
+        "*.yaml": "yaml",
+        "*.yml": "yaml",
+        "*.yaml.tpl": "yaml",
+        "*.yml.tpl": "yaml",
+        "*.sh.tpl": "shellscript"
+    },
+    "explorer.fileNesting.enabled": true,
+    "workbench.colorTheme": "One Dark Pro Night Flat",
+    "workbench.iconTheme": "material-icon-theme"
+}
