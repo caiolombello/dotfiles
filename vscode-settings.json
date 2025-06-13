@@ -1,7 +1,4 @@
 {
-    "remote.SSH.remotePlatform": {
-        "rpi5": "linux"
-    },
     "editor.fontFamily": "'Hack Nerd Font', 'Hack Nerd Font Mono'",
     "files.autoSave": "afterDelay",
     "files.trimTrailingWhitespace": true,
