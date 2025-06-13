@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Obtém a URL do remote origin
+git_remote=$(git remote get-url origin 2>/dev/null)
+
+# Verifica se o repositório foi encontrado
+if [ -z "$git_remote" ]; then
+    echo "Nenhum repositório Git configurado. Certifique-se de estar dentro de um repositório."
+    exit 1
+fi
+
+# Define email e GPG Key conforme o repositório remoto
+if [[ "$git_remote" =~ "github.com" ]]; then
+    git config user.email "YOUR_GITHUB_EMAIL"
+    git config user.signingkey "YOUR_GITHUB_GPG_KEY"
+    echo "Configurado para GitHub."
+
+elif [[ "$git_remote" =~ "gitlab.com" ]]; then
+    git config user.email "YOUR_GITLAB_EMAIL"
+    git config user.signingkey "YOUR_GITLAB_GPG_KEY"
+    echo "Configurado para GitLab."
+
+elif [[ "$git_remote" =~ "gitlab.company.com" ]]; then
+    git config user.email "YOUR_COMPANY_EMAIL"
+    git config user.signingkey "YOUR_COMPANY_GPG_KEY"
+    echo "Configurado para GitLab Company."
+
+else
+    echo "Repositório remoto desconhecido: $git_remote"
+    exit 1
+fi
+
+# Habilita assinatura automática de commits
+git config commit.gpgsign true
+
+echo "Configuração de Git e GPG Key concluída com sucesso!"

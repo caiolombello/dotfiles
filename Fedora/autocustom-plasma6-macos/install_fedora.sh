@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-# Script Name: install_manjaro.sh
+# Script Name: install_fedora.sh
 # Version : 2.0
 # Description: Installation script auto customization
 # KDE Plasma 6 Look Like macOS layout
 #
-# For Linux : Manjaro Linux KDE
+# For Linux : Fedora 40 KDE Edition
 # For Desktop Environment : KDE Plasma 6
 # Author: linuxscoop
 # Youtube: https://youtube.com/user/linuxscoop
@@ -25,98 +25,45 @@ PLASMA6MACOS_check_sudo() {
     kill -0 "$$" || exit
   done 2>/dev/null &
 }
-# Enable AUR Repository
-PLASMA6MACOS_enable_aur_repository() {
-    sudo sed -Ei '/EnableAUR/s/^#//' /etc/pamac.conf
-}
 # Function to update the system
 PLASMA6MACOS_update_system() {
-    sudo pacman -Syyu
+    sudo dnf update -y
 }
 
 # Function to install command line apps and dependencies
 PLASMA6MACOS_install_dependencies() {
-    sudo pacman -S --noconfirm qt5-tools \
-                                curl \
-                                yay \
-                                wget \
-                                rsync \
-                                git \
-                                gnome-terminal \
-                                nautilus \
-                                nautilus-admin \
-                                nautilus-share \
-                                sassc \
-                                kate \
-                                unzip
+    sudo dnf install -y qt5-qttools \
+                        curl \
+                        wget \
+                        rsync \
+                        git \
+                        nautilus \
+                        gnome-terminal-nautilus \
+                        sassc
 }
 
 # Function to install GNOME apps
 PLASMA6MACOS_install_gnome_apps() {
-    sudo pacman -S --noconfirm gnome-weather \
-                            gnome-maps \
-                            gnome-calendar \
-                            gnome-clocks \
-                            vlc
-}
-# Function to install the Zsh shell
-PLASMA6MACOS_install_zsh_shell() {
-    sudo pacman -S --noconfirm zsh
-    sudo chsh -s $(which zsh)
-    sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" <<EOF
-Y
-EOF
-    git clone https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
-    git clone https://github.com/zsh-users/zsh-history-substring-search ~/.oh-my-zsh/custom/plugins/zsh-history-substring-search
-}
-
-# Function to install Oh My Posh
-PLASMA6MACOS_install_ohmyposh() {
-    # Define variables
-    OMP_BINARY="/usr/local/bin/oh-my-posh"
-    OMP_DOWNLOAD_URL="https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-amd64"
-
-    # Download Oh My Posh binary if it doesn't already exist
-    if [ -f "$OMP_BINARY" ]; then
-        echo "Oh My Posh is already installed. Skipping download."
-    else
-        if sudo wget "$OMP_DOWNLOAD_URL" -O "$OMP_BINARY"; then
-            echo "Downloaded Oh My Posh binary successfully."
-        else
-            echo "Failed to download Oh My Posh binary."
-            exit 1
-        fi
-    fi
-    # Set execute permissions on the binary
-    sudo chmod +x "$OMP_BINARY"
-    # Unzip configuration files
-    if unzip -o assets/plasma6macos-zshomh-config.zip -d "$HOME"; then
-        echo "Fish Shell and Oh My Posh config installed successfully."
-    else
-        echo "Failed to unzip Fish Shell and Oh My Posh."
-        exit 1
-    fi
-
-    # Set permissions for themes
-    if chmod u+rw "$HOME/.poshthemes/"*.json; then
-        echo "Set read and write permissions for Oh My Posh themes."
-    else
-        echo "Failed to set permissions for Oh My Posh themes."
-    fi
-
-    echo "Oh My Posh installation completed."
+    sudo dnf install -y gnome-weather \
+                        gnome-maps \
+                        gnome-calendar \
+                        gnome-clocks \
+                        vlc
 }
 
 # Function to enable Flatpak, AppImage support, and add Flathub repository
 PLASMA6MACOS_enable_flatpak_appimage() {
-    sudo pacman -S --noconfirm flatpak
+    sudo dnf install -y flatpak fuse
     sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 }
 
 # Install Flatpak applications
 PLASMA6MACOS_install_flatpak_apps() {
-    flatpak install -y flathub io.bassi.Amberol #com.mattjakeman.ExtensionManager com.github.KRTirtho.Spotube
+    flatpak install -y flathub io.bassi.Amberol com.mattjakeman.ExtensionManager com.github.KRTirtho.Spotube
+    # make flatpak apps follow active theme
+    # sudo flatpak override --filesystem=$HOME/.themes
+    # sudo flatpak override --filesystem=$HOME/.local/share/icons
+    # sudo flatpak override --filesystem=xdg-config/gtk-4.0
     OVERRIDE_FILE="$HOME/.local/share/flatpak/overrides/global"
 
     # Ensure the overrides directory exists
@@ -137,7 +84,7 @@ PLASMA6MACOS_install_plasma_theme() {
 
 # Function to install Kvantum Manager
 PLASMA6MACOS_install_kvantum_manager() {
-    sudo pacman -S kvantum-qt5 --noconfirm
+    sudo dnf install kvantum -y
     unzip -o assets/plasma6macos-kvantum-config.zip -d $HOME
 }
 
@@ -171,19 +118,21 @@ PLASMA6MACOS_install_plasmoids_widget() {
 
 # Function to install the Plymouth macOS theme
 PLASMA6MACOS_install_plymouth() {
+    sudo dnf install -y plymouth plymouth-theme-script
     sudo unzip -o assets/plasma6macos-plymouth-config.zip -d /
     sudo plymouth-set-default-theme -R macOS
 }
 # Function to install Albert
 PLASMA6MACOS_install_albert() {
-    yay -S albert --noconfirm
+    sudo dnf config-manager --add-repo https://download.opensuse.org/repositories/home:manuelschneid3r/Fedora_40/home:manuelschneid3r.repo
+    sudo dnf install albert -y
     unzip -o assets/plasma6macos-albertlauncher-config.zip -d $HOME
     sudo unzip -o assets/plasma6macos-albertlauncher-theme.zip -d /
 }
 
 # Function to install the SDDM macOS Sequoia theme
 PLASMA6MACOS_install_sddm_theme() {
-    sudo unzip -o assets/plasma6macos-sddm-manjaro.zip -d /
+    sudo unzip -o assets/plasma6macos-sddm-config.zip -d /
 }
 
 # Function to install Plasma 6 macOS resources
@@ -218,7 +167,27 @@ PLASMA6MACOS_install_firefox_safari_theme() {
 # Function to install KWin effects force blur
 PLASMA6MACOS_install_kwin_effect() {
     unzip -o assets/plasma6macos-kwin-effect.zip -d $HOME
-    sudo pacman -S base-devel git extra-cmake-modules qt6-tools --noconfirm
+    sudo dnf install -y git \
+                        cmake extra-cmake-modules \
+                        gcc-g++ \
+                        kf6-kwindowsystem-devel \
+                        plasma-workspace-devel \
+                        libplasma-devel \
+                        qt6-qtbase-private-devel \
+                        qt6-qtbase-devel \
+                        kwin-devel \
+                        kf6-knotifications-devel \
+                        kf6-kio-devel \
+                        kf6-kcrash-devel \
+                        kf6-ki18n-devel \
+                        kf6-kguiaddons-devel \
+                        libepoxy-devel \
+                        kf6-kglobalaccel-devel \
+                        kf6-kcmutils-devel \
+                        kf6-kconfigwidgets-devel \
+                        kf6-kdeclarative-devel \
+                        kdecoration-devel \
+                        wayland-devel
     # Create and enter src directory
     [ ! -d "src" ] && mkdir src
     cd src || exit
@@ -250,10 +219,58 @@ PLASMA6MACOS_prompt_for_logout() {
     fi
 }
 
+# Function to show post-installation recommendations
+PLASMA6MACOS_post_install_recommendations() {
+    clear
+    echo "============================================================="
+    echo " Post-Installation Recommendations for Fedora "
+    echo "============================================================="
+    echo
+    echo "1. Update your system:"
+    echo "   sudo dnf update -y"
+    echo
+    echo "2. Enable Flathub repository:"
+    echo "   sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo"
+    echo
+    echo "3. Enable RPM Fusion repositories:"
+    echo "   # Free repository"
+    echo "   sudo dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm"
+    echo "   # Non-free repository"
+    echo "   sudo dnf install -y https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm"
+    echo
+    echo "4. Install multimedia codecs:"
+    echo "   sudo dnf install -y gstreamer1-plugins-{bad-\*,good-\*,base} gstreamer1-plugin-openh264 mozilla-openh264"
+    echo "   sudo dnf install -y lame\* --exclude=lame-devel"
+    echo "   sudo dnf group upgrade --with-optional Multimedia"
+    echo
+    echo "Would you like to execute these recommendations now? (y/n)"
+    read -r response
+    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+        echo "Updating system..."
+        sudo dnf update -y
+
+        echo "Enabling Flathub..."
+        sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
+        echo "Enabling RPM Fusion repositories..."
+        sudo dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+        sudo dnf install -y https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+
+        echo "Installing multimedia codecs..."
+        sudo dnf install -y gstreamer1-plugins-{bad-\*,good-\*,base} gstreamer1-plugin-openh264 mozilla-openh264
+        sudo dnf install -y lame\* --exclude=lame-devel
+        sudo dnf group upgrade --with-optional Multimedia
+
+        echo "Post-installation recommendations completed successfully!"
+    else
+        echo "You can run these commands manually when you're ready."
+    fi
+}
+
 # Start the script execution
 clear
 echo "============================================================="
-echo " Auto Customize KDE Plasma 6 Look Like macoS on Manjaro Linux"
+echo " Auto Customize KDE Plasma 6 Look Like macoS on Fedora WS 40 "
 echo "============================================================="
 # Detailed prompt for user confirmation
 echo
@@ -263,9 +280,6 @@ read -p "Would you like to proceed with the customization? (yes/no): " response
 if [[ "$response" =~ ^(yes|y|Y)$ ]]; then
     echo "Great choice! Starting the customization process... 🎉"
     PLASMA6MACOS_check_sudo
-    clear
-    echo "Enable AUR Repository..."
-    PLASMA6MACOS_enable_aur_repository
     clear
     echo "Updating your system with new packages..."
     PLASMA6MACOS_update_system
@@ -302,8 +316,7 @@ if [[ "$response" =~ ^(yes|y|Y)$ ]]; then
     PLASMA6MACOS_install_flatpak_apps
     clear
     echo "Installing ZSH Shell + OhMyPOSH..."
-    PLASMA6MACOS_install_zsh_shell
-    PLASMA6MACOS_install_ohmyposh
+    bash "$(dirname "$0")/../../shell/install_zsh.sh"
     clear
     echo "Installing Konsole terminal profile..."
     PLASMA6MACOS_install_konsole_profile
@@ -330,6 +343,8 @@ if [[ "$response" =~ ^(yes|y|Y)$ ]]; then
     PLASMA6MACOS_install_plasma6macos_config
     clear
     PLASMA6MACOS_prompt_for_logout
+    clear
+    PLASMA6MACOS_post_install_recommendations
     else
         echo "Got it! If you change your mind, just run this script again. 😊"
 fi
