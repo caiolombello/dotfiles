@@ -10,7 +10,8 @@
 # Author: linuxscoop
 # Youtube: https://youtube.com/user/linuxscoop
 # Created: Nov 21, 2024
-# Last Modified: Nov 25, 2024
+# Last Modified: Jun 13, 2025
+# Modified by: caiolombello
 # Function to prompt for sudo password and exit if incorrect
 PLASMA6MACOS_check_sudo() {
   if ! sudo -v; then
