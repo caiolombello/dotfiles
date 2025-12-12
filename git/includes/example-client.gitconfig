@@ -1,0 +1,9 @@
+[user]
+  name = Caio
+  email = you@example.com
+  signingkey = YOUR_GPG_KEY_ID
+
+[github]
+  user = youruser
+
+

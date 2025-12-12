@@ -1,32 +1,48 @@
+# Helpers to manage PATH without duplicates
+path_prepend() {
+  case ":$PATH:" in
+    *":$1:"*) ;;
+    *) PATH="$1:$PATH" ;;
+  esac
+}
+
+path_append() {
+  case ":$PATH:" in
+    *":$1:"*) ;;
+    *) PATH="$PATH:$1" ;;
+  esac
+}
+
 # System paths
-export PATH=$PATH:/usr/sbin:$HOME/.local/bin
+path_append "/usr/sbin"
+path_prepend "$HOME/.local/bin"
 
-# Go paths
-export PATH=$PATH:/usr/local/go/bin
-export GOPATH=$HOME/go
-export PATH=$PATH:$HOME/go/bin
+# Go
+export GOPATH="${GOPATH:-$HOME/go}"
+path_append "/usr/local/go/bin"
+path_append "$GOPATH/bin"
 
-# Rust paths
-. "$HOME/.cargo/env"
+# Rust (optional)
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 
-# Node.js paths
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# Node.js (nvm, optional)
+export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
 
-# .NET paths
-export PATH=$PATH:$HOME/.dotnet:$HOME/.dotnet/tools
+# .NET
+path_append "$HOME/.dotnet"
+path_append "$HOME/.dotnet/tools"
 
-# Bun paths
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
+# Bun (optional)
+export BUN_INSTALL="${BUN_INSTALL:-$HOME/.bun}"
+[ -d "$BUN_INSTALL/bin" ] && path_prepend "$BUN_INSTALL/bin"
 
-# PNPM paths
-export PNPM_HOME="/home/caio/.local/share/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
+# PNPM
+export PNPM_HOME="${PNPM_HOME:-$HOME/.local/share/pnpm}"
+[ -d "$PNPM_HOME" ] && path_prepend "$PNPM_HOME"
 
 # Custom bin path
-export PATH=/home/caio/bin:$PATH
+[ -d "$HOME/bin" ] && path_prepend "$HOME/bin"
+
+export PATH

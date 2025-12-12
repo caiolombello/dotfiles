@@ -1,0 +1,224 @@
+### OS
+Distributor ID:	Ubuntu
+Description:	Ubuntu 24.04.3 LTS
+Release:	24.04
+Codename:	noble
+
+### /etc/os-release
+PRETTY_NAME="Ubuntu 24.04.3 LTS"
+NAME="Ubuntu"
+VERSION_ID="24.04"
+VERSION="24.04.3 LTS (Noble Numbat)"
+VERSION_CODENAME=noble
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+UBUNTU_CODENAME=noble
+LOGO=ubuntu-logo
+
+### Kern
+Linux opsteam 6.14.0-37-generic #37~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Thu Nov 20 10:25:38 UTC 2 x86_64 x86_64 x86_64 GNU/Linux
+
+### Key commands
+zsh: /usr/bin/zsh
+git: /usr/bin/git
+curl: /usr/bin/curl
+wget: /usr/bin/wget
+rg: /usr/bin/rg
+fdfind: /usr/bin/fdfind
+bat: /home/caio/.cargo/bin/bat
+batcat: /usr/bin/batcat
+exa: /home/caio/.cargo/bin/exa
+delta: /usr/bin/delta
+kubectl: alias kubectl=kubecolor
+kubectx: /usr/bin/kubectx
+kubens: /usr/bin/kubens
+kubecolor: /usr/bin/kubecolor
+docker: /usr/bin/docker
+flatpak: /usr/bin/flatpak
+snap: /usr/bin/snap
+code: /snap/bin/code
+gpg: /usr/bin/gpg
+oh-my-posh: /home/caio/.local/bin/oh-my-posh
+
+### apt-mark showmanual (top 200)
+alacritty
+antigravity
+apt-transport-https
+awsvpnclient
+bat
+blueman
+bluez
+bluez-obexd
+bolt
+bsdutils
+btm
+build-essential
+ca-certificates
+cargo
+cmake
+containerd.io
+curl
+dash
+diffutils
+dnsmasq
+docker-buildx-plugin
+docker-ce
+docker-ce-cli
+docker-ce-rootless-extras
+docker-compose-plugin
+docker-model-plugin
+earlyoom
+efibootmgr
+extra-cmake-modules
+fd-find
+ffmpegthumbnailer
+findutils
+flameshot
+flatpak
+forticlient
+fzf
+gh
+git
+git-delta
+gnome-screenshot
+gnome-shell-extension-manager
+gnome-software-plugin-flatpak
+gnome-tweaks
+gnupg
+gping
+grep
+grub-efi-amd64
+grub-efi-amd64-signed
+gum
+gzip
+helm
+hostname
+ibus-table-cangjie-big
+ibus-table-cangjie3
+ibus-table-cangjie5
+init
+ksnip
+kubecolor
+kubectl
+kubectx
+language-pack-en
+language-pack-en-base
+language-pack-gnome-en
+language-pack-gnome-en-base
+libadwaita-1-dev
+libchewing3
+libchewing3-data
+libdbus-1-dev
+libfontconfig1-dev
+libfreetype-dev
+libfuse2t64
+libm17n-0
+libmarisa0
+libopencc-data
+libopencc1.1
+libotf1
+libpinyin-data
+libpinyin15
+libpipewire-0.3-dev
+libqt5x11extras5-dev
+libspa-0.2-bluetooth
+libssl-dev
+libudev-dev
+libwayland-dev
+libx11-dev
+libxcb-render0-dev
+libxcb-shape0-dev
+libxcb-xfixes0-dev
+libxcb1-dev
+libxcomposite-dev
+libxkbcommon-dev
+linux-generic-hwe-24.04
+linux-modules-extra-6.14.0-36-generic
+linuxtoys
+login
+m17n-db
+make
+mesa-vdpau-drivers
+mysql-client
+ncurses-base
+ncurses-bin
+neofetch
+obs-studio
+pinhole
+pipewire
+pipewire-audio
+pipewire-pulse
+pipx
+pkg-config
+pritunl-client-electron
+pulseaudio-utils
+pv
+python3-netifaces
+python3-pip
+python3.12-venv
+qtbase5-dev
+ripgrep
+sd
+shim-signed
+slurp
+solaar
+systemd-resolved
+tableplus
+terraform
+thunderbolt-tools
+traceroute
+ubuntu-desktop-minimal
+ubuntu-minimal
+ubuntu-restricted-addons
+ubuntu-standard
+ubuntu-wallpapers
+v4l-utils
+valkey-server
+vault
+vim
+vim-gtk3
+wbritish
+whois
+wireplumber
+wl-clipboard
+xclip
+xdg-desktop-portal
+xdg-desktop-portal-gnome
+xdg-desktop-portal-gtk
+xdg-desktop-portal-wlr
+xwayland
+zsh
+
+### snap list (if any)
+Name                       Version                         Rev    Tracking         Publisher     Notes
+bare                       1.0                             5      latest/stable    canonical**   base
+brave                      1.85.111                        575    latest/stable    brave**       -
+cheese                     44.1                            78     latest/stable    ken-vandine*  -
+code                       bf9252a2                        215    latest/stable    vscode**      classic
+core18                     20251029                        2976   latest/stable    canonical**   base
+core20                     20250822                        2682   latest/stable    canonical**   base
+core22                     20251009                        2163   latest/stable    canonical**   base
+core24                     20251001                        1225   latest/stable    canonical**   base
+firefox                    146.0-2                         7477   latest/stable/…  mozilla**     -
+firmware-updater           0+git.0052f6b                   210    1/stable/…       canonical**   -
+gnome-3-28-1804            3.28.0-19-g98f9e67.98f9e67      198    latest/stable    canonical**   -
+gnome-3-38-2004            0+git.efb213a                   143    latest/stable    canonical**   -
+gnome-42-2204              0+git.837775c-sdk0+git.7b07595  226    latest/stable/…  canonical**   -
+gnome-46-2404              0+git.df85349-sdk0+git.54e4d8f  145    latest/stable    canonical**   -
+gtk-common-themes          0.1-81-g442e511                 1535   latest/stable/…  canonical**   -
+mesa-2404                  25.0.7-snap211                  1165   latest/stable    canonical**   -
+morgen                     4.0.0-beta.33                   148    latest/stable    anconam       -
+snap-store                 0+git.90575829                  1270   2/stable/…       canonical**   -
+snapd                      2.72                            25577  latest/stable    canonical**   snapd
+snapd-desktop-integration  0.9                             315    latest/stable/…  canonical**   -
+spotify                    1.2.74.477.g3be53afe            89     latest/stable    spotify**     -
+
+### flatpak list (if any)
+Flatseal	com.github.tchx84.Flatseal	2.4.0	stable	system
+Zed	dev.zed.Zed	v0.216.0	stable	system
+Flameshot	org.flameshot.Flameshot	13.3.0	stable	system
+Piper	org.freedesktop.Piper	0.8	stable	system

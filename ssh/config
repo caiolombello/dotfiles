@@ -1,0 +1,10 @@
+Host *
+  AddKeysToAgent yes
+  IdentitiesOnly yes
+  ServerAliveInterval 60
+  ServerAliveCountMax 3
+
+# Per-client entries go in ~/.ssh/config.d/*.conf
+Include ~/.ssh/config.d/*.conf
+
+

@@ -1,0 +1,59 @@
+# OS / editor
+.DS_Store
+.AppleDouble
+Thumbs.db
+.idea/
+.vscode/
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Node
+node_modules/
+dist/
+build/
+.next/
+.nuxt/
+.svelte-kit/
+.cache/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Go
+bin/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+crash.log
+
+# Kubernetes
+*.kubeconfig
+
+

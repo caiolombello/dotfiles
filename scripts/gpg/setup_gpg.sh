@@ -50,14 +50,19 @@ configure_gpg_agent() {
     mkdir -p ~/.gnupg
     chmod 700 ~/.gnupg
 
-    # Configure GPG to use agent
-    echo "use-agent" >> ~/.gnupg/gpg.conf
+    # Ensure config files exist
+    touch ~/.gnupg/gpg.conf ~/.gnupg/gpg-agent.conf
 
-    # Configure pinentry
+    # Configure GPG to use agent (idempotent)
+    grep -q '^use-agent$' ~/.gnupg/gpg.conf 2>/dev/null || echo "use-agent" >> ~/.gnupg/gpg.conf
+
+    # Configure pinentry (idempotent)
     if command_exists pinentry-gtk-2; then
-        echo "pinentry-program /usr/bin/pinentry-gtk-2" >> ~/.gnupg/gpg-agent.conf
+        grep -q '^pinentry-program /usr/bin/pinentry-gtk-2$' ~/.gnupg/gpg-agent.conf 2>/dev/null || \
+          echo "pinentry-program /usr/bin/pinentry-gtk-2" >> ~/.gnupg/gpg-agent.conf
     elif command_exists pinentry; then
-        echo "pinentry-program /usr/bin/pinentry" >> ~/.gnupg/gpg-agent.conf
+        grep -q '^pinentry-program /usr/bin/pinentry$' ~/.gnupg/gpg-agent.conf 2>/dev/null || \
+          echo "pinentry-program /usr/bin/pinentry" >> ~/.gnupg/gpg-agent.conf
     fi
 
     # Set permissions

@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# A safe editor wrapper for Git, with fallbacks:
+# - Cursor
+# - VS Code
+# - VSCodium
+# - vim
+
+if command -v cursor >/dev/null 2>&1; then
+  exec cursor --wait "$@"
+fi
+
+if command -v code >/dev/null 2>&1; then
+  exec code --wait "$@"
+fi
+
+if command -v codium >/dev/null 2>&1; then
+  exec codium --wait "$@"
+fi
+
+exec vim "$@"
+
+

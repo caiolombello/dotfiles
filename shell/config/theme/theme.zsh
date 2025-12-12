@@ -19,7 +19,11 @@ plugins=(
   helm
 )
 
-source $ZSH/oh-my-zsh.sh
+if [ -f "$ZSH/oh-my-zsh.sh" ]; then
+  source "$ZSH/oh-my-zsh.sh"
+fi
 
 # Initialize Oh My Posh
-eval "$(oh-my-posh init zsh --config $HOME/.poshthemes/powerlevel10k_modern.omp.json)"
+if command -v oh-my-posh >/dev/null 2>&1 && [ -f "$HOME/.poshthemes/powerlevel10k_modern.omp.json" ]; then
+  eval "$(oh-my-posh init zsh --config "$HOME/.poshthemes/powerlevel10k_modern.omp.json")"
+fi

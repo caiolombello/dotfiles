@@ -1,0 +1,6 @@
+alacritty
+flameshot
+gnome-tweaks
+gnome-shell-extension-manager
+earlyoom
+

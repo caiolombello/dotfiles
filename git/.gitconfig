@@ -1,0 +1,63 @@
+[user]
+  name = Caio Barbieri
+  # email é definido por cliente via includeIf (veja git/includes/)
+
+[core]
+  editor = git-editor
+  whitespace = trailing-space,space-before-tab
+  excludesfile = ~/.config/git/ignore_global
+
+[init]
+  defaultBranch = main
+
+[pull]
+  rebase = true
+
+[rebase]
+  autoStash = true
+
+[fetch]
+  prune = true
+
+[push]
+  default = simple
+  autoSetupRemote = true
+
+[merge]
+  conflictstyle = zdiff3
+
+[diff]
+  algorithm = histogram
+  colorMoved = plain
+
+[gpg]
+  program = gpg
+
+[commit]
+  gpgsign = true
+
+[tag]
+  gpgsign = true
+
+[format]
+  pretty = %C(auto)%h %d %s %C(black)%C(bold)%cr%C(reset) %C(dim white)(%an)%C(reset)
+
+[alias]
+  st = status -sb
+  co = checkout
+  br = branch
+  ci = commit
+  ca = commit --amend
+  last = log -1 --stat
+  lg = log --graph --decorate --oneline --all
+
+[include]
+  # arquivo opcional para ajustes locais (não versionado)
+  path = ~/.gitconfig.local
+
+# Regras por diretório (clientes) - preenchidas pelo script `scripts/git/new_client.sh`
+# Exemplos:
+# [includeIf "gitdir:~/Documents/Clientes/acme/"]
+#   path = ~/.config/git/clients/acme.gitconfig
+
+

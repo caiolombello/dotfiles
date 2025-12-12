@@ -17,9 +17,14 @@
         "*.yml": "yaml",
         "*.yaml.tpl": "yaml",
         "*.yml.tpl": "yaml",
-        "*.sh.tpl": "shellscript"
+        "*.sh.tpl": "shellscript",
+        "*.tfvars.*": "terraform",
+        "*.tfvars": "terraform"
     },
     "explorer.fileNesting.enabled": true,
-    "workbench.colorTheme": "One Dark Pro Night Flat",
-    "workbench.iconTheme": "material-icon-theme"
+    "workbench.colorTheme": "Tokyo Night Storm",
+    "workbench.iconTheme": "material-icon-theme",
+    "explorer.compactFolders": false,
+    "explorer.confirmDelete": false,
+    "cursor.composer.shouldAllowCustomModes": true
 }

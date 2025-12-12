@@ -1,0 +1,5 @@
+com.github.tchx84.Flatseal
+org.flameshot.Flameshot
+dev.zed.Zed
+org.freedesktop.Piper
+
