@@ -1,0 +1,3 @@
+# Personal read-only Git shortcuts, reconstructed from reviewed aliases.
+alias gs='git status --short --branch'
+alias gd='git diff'

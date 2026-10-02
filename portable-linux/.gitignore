@@ -1,0 +1,14 @@
+.env*
+auth.json
+credentials*
+*.key
+*.pem
+id_rsa*
+id_ed25519*
+*.patch
+*.bundle
+__pycache__/
+test-output/
+scratch-home/
+sessions/
+*.log
