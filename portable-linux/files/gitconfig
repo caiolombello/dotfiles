@@ -3,3 +3,5 @@
 # git config --file <scratch-home>/.gitconfig user.email <PERSONAL_EMAIL>
 [color]
 	ui = auto
+[user]
+	useConfigOnly = true

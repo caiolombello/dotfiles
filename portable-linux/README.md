@@ -1,6 +1,8 @@
 # Dotfiles pessoais portáveis
 
-Base mínima para Linux genérico: arquivos originais de Vim, Zsh e Git, restauração offline em HOME temporário e módulo Home Manager opcional. Sem instaladores, serviços, contas ou credenciais. Não é backup completo de projetos ou dados mutáveis.
+Base para Linux genérico: arquivos originais de Vim, Zsh e Git, restauração offline em HOME temporário e módulo Home Manager opcional. Incremento em revisão; publicação autorizada em PR draft, sem merge, instalação ou setup nesta máquina. Não é backup completo de projetos ou dados mutáveis.
+
+Para agentes e operadores, começar por [AGENT-SETUP.md](AGENT-SETUP.md) e pelo `AGENTS.md` da raiz. `setup.py` adiciona perfis base/dev/machine/ai, plan-id, doctor, verify e rollback preservando bytes. `restore.py` mantém compatibilidade com o ensaio simples anterior. Ver [config.example.json](config.example.json) para identidade pessoal local com placeholders; nunca preencher identidade real no repo.
 
 ## Conteúdo e proveniência
 
@@ -8,10 +10,12 @@ Base mínima para Linux genérico: arquivos originais de Vim, Zsh e Git, restaur
 | --- | --- |
 | `files/vimrc` | Preferência pessoal revisada e reescrita: `set mouse=c` |
 | `files/zshrc` | Aliases pessoais revisados e reescritos: `gs` e `gd`, somente consulta Git |
-| `files/gitconfig` | Novo arquivo com `color.ui=auto` e placeholders para identidade manual |
+| `files/gitconfig` | `color.ui=auto` e `user.useConfigOnly=true`; identidade explícita somente em pastas pessoais configuradas |
 | `optional/code-settings.json` | Cinco preferências de formatação observadas e reescritas; não aplicadas automaticamente |
 | `tool-list.txt` | Baseline proposta de sete CLIs; versões e instaladores dependem do SO/TI |
 | `nix/home.nix` | Módulo Home Manager rascunho reaproveitando os três arquivos comuns |
+| `setup.py` | Plano, doctor, apply/verify e rollback transacional sem instalador |
+| `optional/ai/AGENTS.md` | Orientação opcional declarativa, sem credenciais/provider/permissões |
 
 Não reproduz integralmente prompt, completions, gerenciadores de linguagens, GUI, extensões ou sessões do ambiente original. Não inclui perfis corporativos, includeIf/hosts/acessos, dados de trabalho ou configs de agentes/providers. Nenhuma configuração ativa é carregada pelo restore.
 
@@ -44,4 +48,4 @@ Nix pode precisar admin para /nix, inclusive single-user; não contornar TI. Se 
 
 ## Versionamento e publicação
 
-Revisar os 11 arquivos desta base antes de commit/publicação. Não adicionar inventários da máquina, relatórios de outros projetos, patches não auditados ou histórico de outros repos. Conferir dono, destino e visibilidade reais do remoto antes de enviar; não presumir que um repositório existente seja privado. Esta base não configura remotes nem executa commit/push automaticamente.
+Revisar o diff e testes deste incremento antes de aprovar publicação específica. Não adicionar inventários da máquina, config.local.json, journals, relatórios de outros projetos, patches não auditados ou histórico de outros repos. Conferir dono, destino e visibilidade reais do remoto antes de enviar; não presumir que um repositório existente seja privado. Esta base não configura remotes nem executa commit/push automaticamente.
