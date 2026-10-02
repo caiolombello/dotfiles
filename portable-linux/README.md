@@ -44,4 +44,4 @@ Nix pode precisar admin para /nix, inclusive single-user; não contornar TI. Se 
 
 ## Versionamento e publicação
 
-Revisar os 11 arquivos desta base antes de commit/publicação. Não adicionar inventários da máquina, relatórios de outros projetos, patches não auditados ou histórico de outros repos. Conferir dono, destino e visibilidade reais do remoto antes de enviar; não presumir que um repositório existente seja privado. Esta preparação não realizou commit ou push.
+Revisar os 11 arquivos desta base antes de commit/publicação. Não adicionar inventários da máquina, relatórios de outros projetos, patches não auditados ou histórico de outros repos. Conferir dono, destino e visibilidade reais do remoto antes de enviar; não presumir que um repositório existente seja privado. Esta base não configura remotes nem executa commit/push automaticamente.
