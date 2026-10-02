@@ -1,0 +1,5 @@
+{
+  "personal_identity": {"name": "<PERSONAL_NAME>", "email": "<PERSONAL_EMAIL>"},
+  "personal_roots": ["${HOME}/projects/personal"],
+  "machine": {"editor": "vim", "label": "generic-linux"}
+}

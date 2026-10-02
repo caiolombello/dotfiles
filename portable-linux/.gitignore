@@ -12,3 +12,8 @@ test-output/
 scratch-home/
 sessions/
 *.log
+*.local.json
+local.json
+config.local.json
+.local/state/
+test-results/

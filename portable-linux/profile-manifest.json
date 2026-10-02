@@ -1,0 +1,10 @@
+{
+  "optional/code-settings.json": {
+    "destination": ".config/Code/User/settings.json",
+    "sha256": "75b87ab3f367a99e808591e0a631e29c20312dd4e4f4471337619227e14e4617"
+  },
+  "optional/ai/AGENTS.md": {
+    "destination": ".config/personal-ai/AGENTS.md",
+    "sha256": "d704be4146ef2f09a01e7edc3b5b83fc7a662af54f1042933c5a87033237f21a"
+  }
+}
