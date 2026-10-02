@@ -1,0 +1,8 @@
+# Select versions and installation method after OS and IT approval.
+git
+zsh
+vim
+tmux
+ripgrep
+jq
+fzf

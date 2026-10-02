@@ -1,0 +1,14 @@
+{
+  "files/vimrc": {
+    "destination": ".vimrc",
+    "sha256": "b0ba715abcdf04013201b1c7e6af0c5019eab035f3f39853797b18195c6773c6"
+  },
+  "files/zshrc": {
+    "destination": ".zshrc",
+    "sha256": "66cff680b37751ccf4c9448214201081704bb30b45951554d1256c8223ec1181"
+  },
+  "files/gitconfig": {
+    "destination": ".gitconfig",
+    "sha256": "0512ba9f72870423581bf04d9a8be7428e5c6075b1a35461de862394935be512"
+  }
+}
