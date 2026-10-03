@@ -1,0 +1,51 @@
+# Local proposal: publish/run only after explicit approval of Nix installation in CI.
+name: Nix standalone build only
+on:
+  push:
+    paths: ['portable-linux/flake.nix', 'portable-linux/nix/**', 'portable-linux/files/**', '.github/workflows/nix-rehearsal.yml']
+  pull_request:
+    paths: ['portable-linux/flake.nix', 'portable-linux/nix/**', 'portable-linux/files/**', '.github/workflows/nix-rehearsal.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  standalone:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Official pinned Nix distribution in disposable runner only
+        shell: bash
+        run: |
+          set -euo pipefail
+          runtime_home=$(mktemp -d /tmp/nix-ci-home-XXXXXX)
+          dist=$(mktemp -d /tmp/nix-ci-dist-XXXXXX)
+          release=https://releases.nixos.org/nix/nix-2.35.2
+          archive=nix-2.35.2-x86_64-linux.tar.xz
+          curl --fail --location --proto '=https' --tlsv1.2 "$release/$archive" -o "$dist/$archive"
+          curl --fail --location --proto '=https' --tlsv1.2 "$release/$archive.sha256" -o "$dist/checksum"
+          checksum=$(tr -d '\r\n' < "$dist/checksum")
+          [[ "$checksum" =~ ^[0-9a-f]{64}$ ]]
+          (cd "$dist" && printf '%s  %s\n' "$checksum" "$archive" | sha256sum --check -)
+          tar -xJf "$dist/$archive" -C "$dist"
+          HOME="$runtime_home" "$dist/nix-2.35.2-x86_64-linux/install" --no-daemon --no-channel-add --no-modify-profile
+          printf '%s\n' "$runtime_home/.nix-profile/bin" >> "$GITHUB_PATH"
+      - name: Generate real lock, evaluate Linux targets, build x86_64 without activation
+        shell: bash
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          set -euo pipefail
+          python3 portable-linux/nix/validate.py --build > "$RUNNER_TEMP/nix-result.json"
+          stage=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["stage"])' "$RUNNER_TEMP/nix-result.json")
+          mkdir "$RUNNER_TEMP/nix-evidence"
+          cp "$stage/source/flake.lock" "$stage/sources.json" "$stage/validation.json" "$RUNNER_TEMP/nix-evidence/"
+      - name: Preserve generated lock and successful build evidence for review
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: nix-lock-and-validation
+          path: ${{ runner.temp }}/nix-evidence/
+          if-no-files-found: error
+          retention-days: 7
