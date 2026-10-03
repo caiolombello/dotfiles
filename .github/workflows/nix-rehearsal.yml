@@ -1,4 +1,4 @@
-# Local proposal: publish/run only after explicit approval of Nix installation in CI.
+# Explicitly approved Nix installation in disposable GitHub runners only.
 name: Nix standalone build only
 on:
   push:

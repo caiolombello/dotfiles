@@ -1,6 +1,6 @@
 # Nix/Home Manager standalone — ensaio sem ativação
 
-Configuração standalone Linux preparada em fonte, ainda **sem parse/eval/build Nix**.
+Configuração standalone Linux com avaliação/build reais no CI Nix 2.35.2.
 O módulo `home.nix` existente era válido como módulo mínimo, mas faltavam inputs,
 identidade de ensaio e ponto de entrada. Ele foi preservado; `../flake.nix` fornece
 Nixpkgs/Home Manager e `rehearsal.nix` fornece somente uma identidade sintética.
@@ -15,9 +15,10 @@ Refs consultadas em 2026-10-03 e fixadas por revisões reais:
 - Nixpkgs: `774debe7a0d1b496e35677ad955a1011c6ff74f3`.
 - Home Manager: `e5fcd298a00f08b6e8390baf04aa8edb62203070`; nixpkgs segue o mesmo input.
 
-Os pins de revisão são seleção de fonte, não lock nem evidência de avaliação.
-`flake.lock` ainda não existe: somente `nix flake lock` autorizado poderá gerar seus
-narHashes e metadados reais. Não inventar hash, timestamp ou lock à mão.
+Os pins de revisão são seleção de fonte; o `flake.lock` incluído foi gerado por
+`nix flake lock` no [runner autorizado](https://github.com/caiolombello/dotfiles/actions/runs/37082208570)
+e seu artifact foi conferido por digest e hashes das seis fontes. NarHashes e
+metadados foram produzidos pela ferramenta, sem edição manual.
 Alvos: avaliação `x86_64-linux` e `aarch64-linux`; build somente x86_64 no CI proposto.
 O fixture novo usa username `personal-rehearsal`, HOME `/tmp/personal-home-manager-rehearsal`
 e stateVersion `26.05`; não identifica pessoa/host e jamais deve ser ativado.
@@ -33,10 +34,11 @@ PYTHONDONTWRITEBYTECODE=1 python3 nix/validate.py
 ```
 
 Ele preserva scratch e copia somente seis fontes públicas fixas: flake, módulo,
-fixture e os três dotfiles. Não exporta o repo inteiro, configs locais, journals,
+fixture e os três dotfiles, mais o lock revisado quando presente. Não exporta o repo inteiro, configs locais, journals,
 skills, inventários ou WIP. Nenhum arquivo de HOME é lido. Conferir o diff dessas
 seis fontes antes do ensaio; a allowlist sozinha não torna uma fonte modificada segura.
-O caminho `source` retornado é o único que deve entrar no Nix store.
+O caminho `source` retornado é o único que deve entrar no Nix store. O lock existente
+é reutilizado byte a byte; eval/build usam `--no-update-lock-file`.
 
 Em ambiente descartável **já autorizado com Nix instalado**, após revisão:
 
@@ -45,7 +47,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 nix/validate.py --build
 ```
 
 O comando usa HOME temporário, não herda tokens/credenciais, não aceita nixConfig
-de flakes, gera lock real, confere revisões, avalia os dois alvos, constrói a geração
+de flakes, gera lock real somente se ausente, reutiliza o lock existente e confere revisões, avalia os dois alvos, constrói a geração
 x86_64 e compara os três arquivos gerados byte a byte. Nunca executa `activate`,
 `home-manager switch`, `nix profile install`, serviços ou garbage collection.
 Usa o cache oficial padrão; não adiciona cache/credencial nem desativa TLS/sandbox.
@@ -67,12 +69,14 @@ Home Manager real. Rollback do bootstrap foi testado separadamente; gerações H
 Manager dependem de retenção e podem sumir após GC. Nunca misturar HM e bootstrap
 sobre os mesmos destinos (o bootstrap recusa symlinks).
 
-## Plano de CI — depende de aprovação específica
+## CI aprovado e executado
 
 Workflow proposto: `.github/workflows/nix-rehearsal.yml`, Ubuntu 24.04 descartável.
-Publicar esse workflow em branch nova dispara push/PR e instala software no runner;
-é uma nova execução externa, exige aprovação específica antes de publicar.
-Não houve publicação ou execução nesta fase.
+Publicar esse workflow em branch nova dispara push/PR e instala software no runner.
+Esse escopo recebeu aprovação específica: [PR draft 3](https://github.com/caiolombello/dotfiles/pull/3).
+A primeira execução teve sucesso com avaliação nos dois alvos e build x86_64,
+comparação byte a byte dos três dotfiles e nenhuma ativação. A incorporação do lock
+e sua reutilização são verificadas pelos checks do commit atual, antes de merge.
 
 1. Checkout oficial pinado, contents:read, credenciais não persistidas.
 2. Baixar distribuição oficial Nix **2.35.2** e checksum via HTTPS; verificar checksum.
@@ -83,20 +87,22 @@ Não houve publicação ou execução nesta fase.
    Não fazer commit automático, upload de HOME, pacote result ou logs privados.
 
 Download/checksum do mesmo distribuidor verifica integridade, não é assinatura
-independente. A disponibilidade do tarball/checksum e as opções do instalador serão
-conferidas na execução; qualquer falha deve parar, sem trocar fonte/desligar checks.
+independente. Tarball, checksum e opções do instalador foram usados com sucesso na primeira
+execução; futuras falhas devem parar, sem trocar fonte/desligar checks.
 Nix 2.35.2 foi confirmado na [página oficial](https://nixos.org/download/) e
 [tag oficial](https://github.com/NixOS/nix/tree/2.35.2).
 [Upload artifact v4.6.2](https://github.com/actions/upload-artifact/tree/ea165f8d65b6e75b540449e92b4886f43607fa02)
 está pinado por SHA verificado. Sem caches adicionais, self-hosted runner ou secrets.
-Após sucesso real, revisar artifact, lock/input graph e outputs antes de incorporar
-lock ao repo; a aprovação de CI não autoriza merge ou ativação de host.
+Artifact, lock/input graph e outputs foram revisados antes de incorporar o lock
+à branch. A aprovação de CI não autoriza merge ou ativação de host.
 
 ## Limites atuais e recuperação futura
 
-Nix ausente localmente; Docker socket e namespaces já bloqueados. Não contornar
-permissões/kernel, instalar runtime no notebook ou dizer que a checagem de fontes
-é parse/build. O incremento local é preparado, não validado pelo Nix ainda.
+Nix continua ausente localmente; Docker socket e namespaces já bloqueados. Não
+contornar permissões/kernel nem instalar runtime no notebook. A validação real
+foi feita no CI Ubuntu descartável; não é container local nem setup do host.
+ARM64 foi avaliado, sem build/runtime ARM64. Ativação e rollback Home Manager
+não foram executados. Build/eval não certificam o futuro SO ou política de TI.
 Perfis dev/machine/AI e identidade por pasta do bootstrap não foram reimplementados
 nesta camada: Home Manager contém somente base e sete CLIs. Não copiar includeIf,
 providers/MCP, tokens ou identidade real para obter paridade automática.
