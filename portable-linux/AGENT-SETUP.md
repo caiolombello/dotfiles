@@ -161,12 +161,14 @@ Pin do checkout obtido no [commit oficial de v7.0.1](https://github.com/actions/
 
 ## Nix e limites
 
-Home Manager permanece opcional e não instalado/avaliado. Reaproveita os arquivos
+Home Manager permanece opcional e não instalado no notebook. O ensaio standalone
+foi avaliado nos dois alvos Linux e construído em x86_64 no runner Nix autorizado,
+sem ativação; ver `nix/README.md` para lock, CI e limites. Reaproveita os arquivos
 base, incluindo Git explícito, mas perfis dinâmicos/identidade não têm integração
 Home Manager completa. Não misturar dois gerenciadores sobre os mesmos destinos:
-symlinks Home Manager são recusados por este bootstrap. Sem lock inventado ou
-alegação de reprodutibilidade Nix. SO/TI, identidade, stateVersion e inputs/pins
-exigem configuração e avaliação/build posteriores em ambiente autorizado.
+symlinks Home Manager são recusados por este bootstrap. O lock incluído foi gerado pela ferramenta no runner e revisado. SO/TI, identidade
+e stateVersion do host futuro exigem configuração explícita e avaliação/build
+posteriores; o fixture não autoriza ativação real.
 
 O módulo AI é somente orientação, sem provider, endpoint, token, MCP, skills massivas,
 históricos, sessões ou mudança de permissões. Backup dos 13 arquivos pendentes e

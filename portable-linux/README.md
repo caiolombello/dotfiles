@@ -42,7 +42,7 @@ Projetos/WIP precisam de plano independente: selecionar apenas código pessoal a
 
 ## Nix opcional
 
-O módulo em `nix/home.nix` declara sete CLIs e os três dotfiles comuns. Não é configuração standalone completa ou ativada: requer home.username, home.homeDirectory, home.stateVersion e inputs compatíveis definidos na configuração aprovada do host. Sem flake.lock inventado. Nix estava ausente durante a preparação: checagem lexical/referências passou, mas parser/eval/build não foi executado. Ver `nix/README.md`.
+O módulo em `nix/home.nix` declara sete CLIs e os três dotfiles comuns. `flake.nix` e `nix/rehearsal.nix` acrescentam entrada standalone com inputs oficiais fixados e identidade sintética Linux, sem ativação. `nix/validate.py` exporta somente seis fontes para ensaio e pode gerar lock/eval/build em ambiente Nix autorizado. Nix continua ausente localmente. O CI autorizado com Nix 2.35.2 gerou o flake.lock real, avaliou x86_64/ARM64 e construiu x86_64, sem ativação. O lock foi revisado e incorporado à branch; reutilização e checks do commit atual devem passar antes de merge. Ver [nix/README.md](nix/README.md).
 
 Nix pode precisar admin para /nix, inclusive single-user; não contornar TI. Se Nix não for autorizado, manter os arquivos comuns e ferramentas instaladas pelo mecanismo aprovado. Drivers/GPU/audio, VPN, login, agentes de segurança e GUI ficam fora da primeira camada.
 

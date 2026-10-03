@@ -1,0 +1,127 @@
+#!/usr/bin/env python3
+"""Export fixed public sources, then optionally lock/evaluate/build. No activation."""
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import tempfile
+
+ROOT = Path(__file__).resolve().parents[1]
+SOURCES = ("flake.nix", "nix/home.nix", "nix/rehearsal.nix",
+           "files/vimrc", "files/zshrc", "files/gitconfig")
+REVISIONS = {"nixpkgs": "774debe7a0d1b496e35677ad955a1011c6ff74f3",
+             "home-manager": "e5fcd298a00f08b6e8390baf04aa8edb62203070"}
+
+
+def stage():
+    # No arbitrary path/config/identity arguments; no HOME/repo-wide source copy.
+    folder = Path(tempfile.mkdtemp(prefix="personal-nix-", dir="/tmp"))
+    source = folder / "source"
+    source.mkdir()
+    hashes = {}
+    for name in SOURCES:
+        p = ROOT / name
+        if any(x.is_symlink() for x in [p, *p.parents]) or not p.is_file():
+            raise ValueError("Nonordinary or symlink source")
+        data = p.read_bytes()
+        q = source / name
+        q.parent.mkdir(parents=True, exist_ok=True)
+        q.write_bytes(data)
+        hashes[name] = hashlib.sha256(data).hexdigest()
+    # Once the reviewed, tool-generated lock is committed, reuse it verbatim.
+    # Never copy arbitrary local configs or regenerate an existing lock silently.
+    lock = ROOT / "flake.lock"
+    if lock.exists() or lock.is_symlink():
+        if lock.is_symlink() or not lock.is_file():
+            raise ValueError("Nonordinary lock source")
+        data = lock.read_bytes()
+        json.loads(data)
+        (source / "flake.lock").write_bytes(data)
+        hashes["flake.lock"] = hashlib.sha256(data).hexdigest()
+    (folder / "sources.json").write_text(json.dumps(hashes, indent=2) + "\n")
+    return folder, source
+
+
+def run(nix, source, args, env):
+    return subprocess.check_output(
+        [nix, *args], cwd=source, env=env, text=True).strip()
+
+
+def validate(folder, source):
+    nix = shutil.which("nix")
+    if nix is None:
+        raise ValueError("Nix unavailable; export is not parse/eval/build")
+    private_home = folder / "runtime-home"
+    private_home.mkdir()
+    env = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"),
+           "HOME": str(private_home), "LANG": "C.UTF-8",
+           "NIX_USER_CONF_FILES": "/dev/null",
+           "NIX_CONFIG": "experimental-features = nix-command flakes\naccept-flake-config = false\n"}
+    version = run(nix, source, ["--version"], env)
+    reused_lock = (source / "flake.lock").exists()
+    if not reused_lock:
+        run(nix, source, ["flake", "lock", "path:" + str(source)], env)
+    lock = json.loads((source / "flake.lock").read_text())
+    inputs = lock["nodes"][lock["root"]]["inputs"]
+    for name, revision in REVISIONS.items():
+        node = lock["nodes"][inputs[name]]["locked"]
+        if node["rev"] != revision or "narHash" not in node:
+            raise ValueError("Unexpected generated input lock")
+    if lock["nodes"][inputs["home-manager"]]["inputs"]["nixpkgs"] != ["nixpkgs"]:
+        raise ValueError("Home Manager must follow the selected Nixpkgs")
+    evaluations = {}
+    for system in ("x86_64-linux", "aarch64-linux"):
+        attr = ".#homeConfigurations.rehearsal-" + system
+        evaluations[system] = run(nix, source,
+            ["eval", "--no-update-lock-file", "--raw", attr + ".activationPackage.drvPath"], env)
+        for option, expected in (("username", "personal-rehearsal"),
+                                 ("homeDirectory", "/tmp/personal-home-manager-rehearsal"),
+                                 ("stateVersion", "26.05")):
+            actual = json.loads(run(nix, source,
+                ["eval", "--no-update-lock-file", "--json", attr + ".config.home." + option], env))
+            if actual != expected:
+                raise ValueError("Synthetic host configuration drift")
+    # CI is x86_64; no cross-build or ARM runtime claim.
+    output = run(nix, source, ["build", "--no-update-lock-file", "--no-link",
+                              "--print-out-paths", ".#packages.x86_64-linux.default"], env)
+    outputs = output.splitlines()
+    if len(outputs) != 1 or not outputs[0].startswith("/nix/store/"):
+        raise ValueError("Unexpected build outputs")
+    generation = Path(outputs[0])
+    if not (generation / "activate").is_file():
+        raise ValueError("Missing activation artifact (must not execute it)")
+    for source_name, target in (("files/vimrc", ".vimrc"), ("files/zshrc", ".zshrc"),
+                                ("files/gitconfig", ".gitconfig")):
+        if (generation / "home-files" / target).read_bytes() != (source / source_name).read_bytes():
+            raise ValueError("Built dotfile differs from reviewed source")
+    report = {"nix": version, "evaluated": evaluations, "built": outputs,
+              "source_bytes_verified": True, "activation_executed": False,
+              "arm_build": False,
+              "lock_sha256": hashlib.sha256((source / "flake.lock").read_bytes()).hexdigest(),
+              "lock": "reused reviewed tool-generated lock" if reused_lock else "generated by nix flake lock"}
+    (folder / "validation.json").write_text(json.dumps(report, indent=2) + "\n")
+    # Deliberately preserve scratch sources, lock and build evidence.
+    return report
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--build", action="store_true",
+                        help="Use only in an explicitly authorized disposable Nix environment")
+    args = parser.parse_args()
+    if args.build and shutil.which("nix") is None:
+        parser.exit(2, "Nix unavailable: no evaluation/build or lock generated.\n")
+    folder, source = stage()
+    result = {"stage": str(folder), "source": str(source), "exported_sources": list(json.loads((folder / "sources.json").read_text())),
+              "evaluated_or_built": False}
+    if args.build:
+        result["validation"] = validate(folder, source)
+        result["evaluated_or_built"] = True
+    print(json.dumps(result, indent=2))
+
+
+if __name__ == "__main__":
+    main()
